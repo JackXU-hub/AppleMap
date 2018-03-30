@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		045D3993206E0C7900846BDD /* JKMapView.m in Sources */ = {isa = PBXBuildFile; fileRef = 045D3992206E0C7900846BDD /* JKMapView.m */; };
 		048AAA9A206C838400FEECCB /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 048AAA99206C838400FEECCB /* AppDelegate.m */; };
 		048AAA9D206C838400FEECCB /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 048AAA9C206C838400FEECCB /* ViewController.m */; };
 		048AAAA0206C838400FEECCB /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 048AAA9E206C838400FEECCB /* Main.storyboard */; };
@@ -15,6 +16,11 @@
 		048AAAA8206C838400FEECCB /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 048AAAA7206C838400FEECCB /* main.m */; };
 		048AAAB2206C838500FEECCB /* MaptestTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 048AAAB1206C838500FEECCB /* MaptestTests.m */; };
 		048AAABD206C838500FEECCB /* MaptestUITests.m in Sources */ = {isa = PBXBuildFile; fileRef = 048AAABC206C838500FEECCB /* MaptestUITests.m */; };
+		048AAACC206CC00800FEECCB /* JKAnnotation.m in Sources */ = {isa = PBXBuildFile; fileRef = 048AAACB206CC00800FEECCB /* JKAnnotation.m */; };
+		048AAAD0206CC2CE00FEECCB /* header_new.png in Resources */ = {isa = PBXBuildFile; fileRef = 048AAACD206CC2CE00FEECCB /* header_new.png */; };
+		048AAAD1206CC2CE00FEECCB /* header_new@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 048AAACE206CC2CE00FEECCB /* header_new@2x.png */; };
+		048AAAD2206CC2CE00FEECCB /* header_new@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = 048AAACF206CC2CE00FEECCB /* header_new@3x.png */; };
+		048AAAD5206CC4EE00FEECCB /* JKAnnotationView.m in Sources */ = {isa = PBXBuildFile; fileRef = 048AAAD4206CC4EE00FEECCB /* JKAnnotationView.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -35,6 +41,8 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		045D3991206E0C7900846BDD /* JKMapView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JKMapView.h; sourceTree = "<group>"; };
+		045D3992206E0C7900846BDD /* JKMapView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = JKMapView.m; sourceTree = "<group>"; };
 		048AAA95206C838400FEECCB /* Maptest.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Maptest.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		048AAA98206C838400FEECCB /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
 		048AAA99206C838400FEECCB /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
@@ -51,6 +59,13 @@
 		048AAAB8206C838500FEECCB /* MaptestUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = MaptestUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		048AAABC206C838500FEECCB /* MaptestUITests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MaptestUITests.m; sourceTree = "<group>"; };
 		048AAABE206C838500FEECCB /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		048AAACA206CC00800FEECCB /* JKAnnotation.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JKAnnotation.h; sourceTree = "<group>"; };
+		048AAACB206CC00800FEECCB /* JKAnnotation.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = JKAnnotation.m; sourceTree = "<group>"; };
+		048AAACD206CC2CE00FEECCB /* header_new.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = header_new.png; sourceTree = "<group>"; };
+		048AAACE206CC2CE00FEECCB /* header_new@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "header_new@2x.png"; sourceTree = "<group>"; };
+		048AAACF206CC2CE00FEECCB /* header_new@3x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "header_new@3x.png"; sourceTree = "<group>"; };
+		048AAAD3206CC4EE00FEECCB /* JKAnnotationView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JKAnnotationView.h; sourceTree = "<group>"; };
+		048AAAD4206CC4EE00FEECCB /* JKAnnotationView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = JKAnnotationView.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -101,10 +116,19 @@
 		048AAA97206C838400FEECCB /* Maptest */ = {
 			isa = PBXGroup;
 			children = (
+				048AAACD206CC2CE00FEECCB /* header_new.png */,
+				048AAACE206CC2CE00FEECCB /* header_new@2x.png */,
+				048AAACF206CC2CE00FEECCB /* header_new@3x.png */,
 				048AAA98206C838400FEECCB /* AppDelegate.h */,
 				048AAA99206C838400FEECCB /* AppDelegate.m */,
 				048AAA9B206C838400FEECCB /* ViewController.h */,
 				048AAA9C206C838400FEECCB /* ViewController.m */,
+				048AAACA206CC00800FEECCB /* JKAnnotation.h */,
+				048AAACB206CC00800FEECCB /* JKAnnotation.m */,
+				048AAAD3206CC4EE00FEECCB /* JKAnnotationView.h */,
+				048AAAD4206CC4EE00FEECCB /* JKAnnotationView.m */,
+				045D3991206E0C7900846BDD /* JKMapView.h */,
+				045D3992206E0C7900846BDD /* JKMapView.m */,
 				048AAA9E206C838400FEECCB /* Main.storyboard */,
 				048AAAA1206C838400FEECCB /* Assets.xcassets */,
 				048AAAA3206C838400FEECCB /* LaunchScreen.storyboard */,
@@ -238,9 +262,12 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				048AAAD1206CC2CE00FEECCB /* header_new@2x.png in Resources */,
+				048AAAD2206CC2CE00FEECCB /* header_new@3x.png in Resources */,
 				048AAAA5206C838400FEECCB /* LaunchScreen.storyboard in Resources */,
 				048AAAA2206C838400FEECCB /* Assets.xcassets in Resources */,
 				048AAAA0206C838400FEECCB /* Main.storyboard in Resources */,
+				048AAAD0206CC2CE00FEECCB /* header_new.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -266,8 +293,11 @@
 			buildActionMask = 2147483647;
 			files = (
 				048AAA9D206C838400FEECCB /* ViewController.m in Sources */,
+				048AAACC206CC00800FEECCB /* JKAnnotation.m in Sources */,
+				045D3993206E0C7900846BDD /* JKMapView.m in Sources */,
 				048AAAA8206C838400FEECCB /* main.m in Sources */,
 				048AAA9A206C838400FEECCB /* AppDelegate.m in Sources */,
+				048AAAD5206CC4EE00FEECCB /* JKAnnotationView.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -431,7 +461,9 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = R5MB99AR64;
 				INFOPLIST_FILE = Maptest/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = suanli.co.Maptest;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -444,7 +476,9 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = R5MB99AR64;
 				INFOPLIST_FILE = Maptest/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = suanli.co.Maptest;
 				PRODUCT_NAME = "$(TARGET_NAME)";

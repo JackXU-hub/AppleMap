@@ -1,166 +1,187 @@
 //
-//  ViewController.m
+//  JKMapView.m
 //  Maptest
 //
-//  Created by Mac on 2018/3/29.
+//  Created by Mac on 2018/3/30.
 //  Copyright © 2018年 Mac. All rights reserved.
 //
 
-#import "ViewController.h"
+#import "JKMapView.h"
 #import <MapKit/MapKit.h>
 #import "JKAnnotation.h"
 #import "JKAnnotationView.h"
-#import "JKMapView.h"
 
-@interface ViewController ()<MKMapViewDelegate,CLLocationManagerDelegate>
+@interface JKMapView()<MKMapViewDelegate,CLLocationManagerDelegate,UITableViewDelegate,UITableViewDataSource>
 @property (strong, nonatomic) CLLocationManager* locationManager;
 @property (nonatomic, strong)CLGeocoder *geoCoder;
 @property (nonatomic, strong)MKMapView *map;
 @property (nonatomic, strong)UILabel *addressLabel;
-
+@property (nonatomic, strong)UITableView *placetab;
+@property (nonatomic, strong)NSMutableArray *dataArray;
 @end
 
-@implementation ViewController
+@implementation JKMapView
 
-- (void)viewDidLoad {
-    [super viewDidLoad];
-//    _map = [[MKMapView alloc]initWithFrame:self.view.bounds];
-//    _map.delegate = self;
-//    _map.userTrackingMode = MKUserTrackingModeFollow;
-//    //显示指南针
-//    _map.showsCompass = YES;
-//    //显示比例尺
-//    _map.showsScale = YES;
-//    //显示交通状况
-//    _map.showsTraffic = YES;
-//    //显示建筑物
-//    _map.showsBuildings = YES;
-//    //显示用户所在的位置
-//    _map.showsUserLocation = YES;
-//    //显示感兴趣的东西
-//    _map.showsPointsOfInterest = YES;
-//    [self.view addSubview:_map];
-//
-//
-//
-//
-//    _addressLabel = [[UILabel alloc]init];
-//    _addressLabel.bounds = CGRectMake(0, 0, 200, 40);
-//    _addressLabel.backgroundColor = [UIColor blackColor];
-//    _addressLabel.textColor = [UIColor whiteColor];
-//    _addressLabel.center = self.view.center;
-//    [self.view addSubview:_addressLabel];
-//
-//
-//    UITextField *keywordSearchButton = [[UITextField alloc]init];
-//    keywordSearchButton.frame = CGRectMake(100, 64, 100, 40);
-//    [keywordSearchButton addTarget:self action:@selector(keywordSearch:) forControlEvents:UIControlEventEditingChanged];
-//    [self.view addSubview:keywordSearchButton];
-//
-//    UIButton *hotSearchButton = [UIButton buttonWithType:UIButtonTypeCustom];
-//    hotSearchButton.frame = CGRectMake(0, 64, 100, 40);
-//    [hotSearchButton setTitle:@"热点搜索" forState:UIControlStateNormal];
-//    [hotSearchButton addTarget:self action:@selector(hotSeatch) forControlEvents:UIControlEventTouchUpInside];
-//    [self.view addSubview:hotSearchButton];
-//
-//    _geoCoder = [[CLGeocoder alloc]init];
-    //[self startLocation];
+- (NSMutableArray *)dataArray{
+    if (!_dataArray){
+        _dataArray = [NSMutableArray array];
+    }
     
-    JKMapView *mapView = [[JKMapView alloc]initWithFrame:self.view.bounds];
-    [self.view addSubview:mapView];
+    return _dataArray;
+}
+
+- (instancetype)initWithFrame:(CGRect)frame{
+    if (self = [super initWithFrame:frame]){
+        [self creatMap];
+    }
+    
+    return self;
+}
+
+- (void)creatMap{
+    _map = [[MKMapView alloc]initWithFrame:self.bounds];
+    _map.delegate = self;
+    _map.userTrackingMode = MKUserTrackingModeFollow;
+    //显示指南针
+    _map.showsCompass = YES;
+    //显示比例尺
+    _map.showsScale = YES;
+    //显示交通状况
+    _map.showsTraffic = YES;
+    //显示建筑物
+    _map.showsBuildings = YES;
+    //显示用户所在的位置
+    _map.showsUserLocation = YES;
+    //显示感兴趣的东西
+    _map.showsPointsOfInterest = YES;
+    [self addSubview:_map];
+    
+    
+    
+    
+    _addressLabel = [[UILabel alloc]init];
+    _addressLabel.bounds = CGRectMake(0, 0, 200, 40);
+    _addressLabel.backgroundColor = [UIColor blackColor];
+    _addressLabel.textColor = [UIColor whiteColor];
+    _addressLabel.center = self.center;
+    [self addSubview:_addressLabel];
+    
+    
+    UITextField *keywordSearchButton = [[UITextField alloc]init];
+    keywordSearchButton.backgroundColor = [UIColor lightGrayColor];
+    keywordSearchButton.frame = CGRectMake(100, 64, 100, 40);
+    [keywordSearchButton addTarget:self action:@selector(keywordSearch:) forControlEvents:UIControlEventEditingChanged];
+    [self addSubview:keywordSearchButton];
+    
+    UIButton *hotSearchButton = [UIButton buttonWithType:UIButtonTypeCustom];
+    hotSearchButton.frame = CGRectMake(0, 64, 100, 40);
+    [hotSearchButton setTitle:@"热点搜索" forState:UIControlStateNormal];
+    [hotSearchButton addTarget:self action:@selector(hotSeatch) forControlEvents:UIControlEventTouchUpInside];
+    [self addSubview:hotSearchButton];
+    
+    
+    _placetab = [[UITableView alloc]initWithFrame:CGRectMake(0, 100, self.frame.size.width, 300)];
+    _placetab.delegate = self;
+    _placetab.dataSource = self;
+    _placetab.hidden = YES;
+    [self addSubview:_placetab];
+    
+    _geoCoder = [[CLGeocoder alloc]init];
 }
 
 
-
 - (void)hotSeatch {
-         //创建本地搜索请求
-         MKLocalSearchRequest *request = [[MKLocalSearchRequest alloc] init];
-         //设置搜索热点词（自然语言）
-         request.naturalLanguageQuery = @"学校";
-         //设置搜索范围，以某个原点为中心，向外扩展一段经纬度距离范围
-         CLLocationCoordinate2D origionpoint = CLLocationCoordinate2DMake(36.08397, 120.37126);
-         //设置经纬度跨越范围
-         MKCoordinateSpan span = MKCoordinateSpanMake(0.3, 0.3);
-         //设置经纬度搜索区域
-         MKCoordinateRegion region = MKCoordinateRegionMake(origionpoint, span);
-         //将区域赋值给搜索请求对象中的region属性中
-         request.region = region;
-         //将地图移动到该区域
-         [_map setRegion:region];
+    //创建本地搜索请求
+    MKLocalSearchRequest *request = [[MKLocalSearchRequest alloc] init];
+    //设置搜索热点词（自然语言）
+    request.naturalLanguageQuery = @"学校";
+    //设置搜索范围，以某个原点为中心，向外扩展一段经纬度距离范围
+    CLLocationCoordinate2D origionpoint = CLLocationCoordinate2DMake(36.08397, 120.37126);
+    //设置经纬度跨越范围
+    MKCoordinateSpan span = MKCoordinateSpanMake(0.3, 0.3);
+    //设置经纬度搜索区域
+    MKCoordinateRegion region = MKCoordinateRegionMake(origionpoint, span);
+    //将区域赋值给搜索请求对象中的region属性中
+    request.region = region;
+    //将地图移动到该区域
+    [_map setRegion:region];
     
-         //创建本地搜索对象
-         MKLocalSearch *search = [[MKLocalSearch alloc] initWithRequest:request];
-         //开启搜索
-         [search startWithCompletionHandler:^(MKLocalSearchResponse * _Nullable response, NSError * _Nullable error) {
+    //创建本地搜索对象
+    MKLocalSearch *search = [[MKLocalSearch alloc] initWithRequest:request];
+    //开启搜索
+    [search startWithCompletionHandler:^(MKLocalSearchResponse * _Nullable response, NSError * _Nullable error) {
         
-                 if (error == nil) {
+        if (error == nil) {
             
-                         //搜索成功
-                         //获取搜索结果
-                         NSArray *arrResult = response.mapItems;
+            //搜索成功
+            //获取搜索结果
+            NSArray *arrResult = response.mapItems;
             
-                         for (MKMapItem *item in arrResult) {
+            for (MKMapItem *item in arrResult) {
                 
-                                 //先取出地图目的坐标对象(标记)
-                                 MKPlacemark *placeMark = item.placemark;
-                                 /*
-                                    96                  地标里存放的经纬度，以及位置的地理信息说明，如名字、街道等等
-                                    97                  */
-                                 //创建大头针
-                             JKAnnotation *anno = [[JKAnnotation alloc] init];
-                             anno.title = @"我是一个大头针";
-                             anno.subtitle = @"我有一个小弟叫小头";
-                             anno.coordinate = placeMark.location.coordinate;
-                             [_map addAnnotation:anno];
-                             
-                             }
-            
-            
-                     }else {
-                             NSLog(@"搜索失败");
+                //先取出地图目的坐标对象(标记)
+                MKPlacemark *placeMark = item.placemark;
+                /*
+                 96                  地标里存放的经纬度，以及位置的地理信息说明，如名字、街道等等
+                 97                  */
+                //创建大头针
+                JKAnnotation *anno = [[JKAnnotation alloc] init];
+                anno.title = @"我是一个大头针";
+                anno.subtitle = @"我有一个小弟叫小头";
+                anno.coordinate = placeMark.location.coordinate;
+                [_map addAnnotation:anno];
                 
-                         }
+            }
+            
+            
+        }else {
+            NSLog(@"搜索失败");
+            
+        }
         
-             }];
+    }];
     
-     }
+}
 
 
 //关键字搜索
 - (void)keywordSearch:(UITextField*)field {
-         //创建地理编码
-         CLGeocoder *geocoder = [[CLGeocoder alloc] init];
-         //正向地理编码
-         [geocoder geocodeAddressString:field.text completionHandler:^(NSArray * _Nullable placemarks, NSError * _Nullable error) {
+    if (field.text.length == 0){
+        _placetab.hidden = YES;
+    }
+    //创建地理编码
+    CLGeocoder *geocoder = [[CLGeocoder alloc] init];
+    //正向地理编码
+    [geocoder geocodeAddressString:field.text completionHandler:^(NSArray * _Nullable placemarks, NSError * _Nullable error) {
         
-                 if (error == nil) {
-                         //解析地理位置成功
-                         //成功后遍历数组
-                         for (CLPlacemark *place in placemarks) {
+        if (error == nil) {
+            //解析地理位置成功
+            //成功后遍历数组
+            for (CLPlacemark *place in placemarks) {
                 
-                                 //创建大头针
+                //创建大头针
                 
-//                                 MyPointAnnotation *annotation = [[MyPointAnnotation alloc] initWithCoorDinate:place.location.coordinate title:place.name subTitle:place.locality information:place.locality];
-//                                 //将大头针加入到地图
-//                                 [_map addAnnotation:annotation];
-                             
-                             JKAnnotation *anno = [[JKAnnotation alloc] init];
-                             anno.title = place.name;
-                             anno.coordinate = place.location.coordinate;
-                             [_map addAnnotation:anno];
-                             
-                             [_map setCenterCoordinate:place.location.coordinate];
+                //                                 MyPointAnnotation *annotation = [[MyPointAnnotation alloc] initWithCoorDinate:place.location.coordinate title:place.name subTitle:place.locality information:place.locality];
+                //                                 //将大头针加入到地图
+                //                                 [_map addAnnotation:annotation];
+                [self.dataArray removeAllObjects];
+                [self.dataArray addObject:place];
+                _placetab.hidden = NO;
+                [_placetab reloadData];
+               
                 
-                             }
+                
+                
+            }
             
-                     }else {
-                
-                             NSLog(@"正向地理编码解析失败");
-                         }
-             
-             }];
+        }else {
+            
+            NSLog(@"正向地理编码解析失败");
+        }
+        
+    }];
     
-     }
+}
 -(void)startLocation{
     
     if ([CLLocationManager locationServicesEnabled]) {//判断定位操作是否被允许
@@ -210,7 +231,7 @@
             NSLog(@"%@", [address objectForKey:@"State"]);
             
             NSLog(@"%@", [address objectForKey:@"City"]);
-          
+            
             
         }
         
@@ -281,16 +302,16 @@
 
 //每次调用，都会把用户的最新位置（userLocation参数）传进来
 - (void)mapView:(MKMapView *)mapView didUpdateUserLocation:(MKUserLocation *)userLocation{
-   
+    
 }
 - (void)mapView:(MKMapView *)mapView regionWillChangeAnimated:(BOOL)animated{
-
-//    JKAnnotation *anno = [[JKAnnotation alloc] init];
-//    anno.title = @"我是一个大头针";
-//    anno.subtitle = @"我有一个小弟叫小头";
-//    anno.coordinate = CLLocationCoordinate2DMake(mapView.centerCoordinate.latitude, mapView.centerCoordinate.longitude);
-//    [mapView addAnnotation:anno];
-
+    
+    //    JKAnnotation *anno = [[JKAnnotation alloc] init];
+    //    anno.title = @"我是一个大头针";
+    //    anno.subtitle = @"我有一个小弟叫小头";
+    //    anno.coordinate = CLLocationCoordinate2DMake(mapView.centerCoordinate.latitude, mapView.centerCoordinate.longitude);
+    //    [mapView addAnnotation:anno];
+    
     CLLocation *currLocation = [[CLLocation alloc]initWithLatitude:mapView.centerCoordinate.latitude longitude:mapView.centerCoordinate.longitude];
     [_geoCoder reverseGeocodeLocation:currLocation completionHandler:^(NSArray *placemarks, NSError *error) {
         
@@ -333,7 +354,7 @@
     if (annotationView == nil) {
         annotationView = [[MKAnnotationView alloc] initWithAnnotation:annotation reuseIdentifier:reuseIdentifier];
     }
-
+    
     //设置可重用标识符的相关属性
     // 显示标题和副标题
     annotationView.canShowCallout = YES;
@@ -341,30 +362,49 @@
     annotationView.image = [UIImage imageNamed:@"header_new"];
     //须导入#import "UIImageView+WebCache.h"头文件
     // [annotationView.image sd_setImageWithURL:[NSURL URLWithString:[dict valueForKey:@"icon"]] placeholderImage:[UIImage imageNamed:@"默认图片"]];
-
-
+    
+    
     return annotationView;
     
     // 判断大头针位置是否在原点,如果是则不加大头针
-//    if([annotation isKindOfClass:[mapView.userLocation class]]){
-//        return nil;
-//    }
-//    //设置自定义大头针
-//    JKAnnotationView *annotationView = (JKAnnotationView *)[mapView dequeueReusableAnnotationViewWithIdentifier:@"otherAnnotationView"];
-//    if (annotationView == nil) {
-//        annotationView = [[JKAnnotationView alloc]initWithAnnotation:annotation reuseIdentifier:@"otherAnnotationView"];
-//    }
-//    annotationView.image = [UIImage imageNamed:@"header_new"];
+    //    if([annotation isKindOfClass:[mapView.userLocation class]]){
+    //        return nil;
+    //    }
+    //    //设置自定义大头针
+    //    JKAnnotationView *annotationView = (JKAnnotationView *)[mapView dequeueReusableAnnotationViewWithIdentifier:@"otherAnnotationView"];
+    //    if (annotationView == nil) {
+    //        annotationView = [[JKAnnotationView alloc]initWithAnnotation:annotation reuseIdentifier:@"otherAnnotationView"];
+    //    }
+    //    annotationView.image = [UIImage imageNamed:@"header_new"];
     
-  //  return annotationView;
+    //  return annotationView;
 }
 
 
-
-- (void)didReceiveMemoryWarning {
-    [super didReceiveMemoryWarning];
-    // Dispose of any resources that can be recreated.
+#pragma mark----------UITableViewDelegate
+- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section{
+    return self.dataArray.count;
 }
 
 
+- (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath{
+    return 50;
+}
+
+- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath{
+    UITableViewCell *cell = [[UITableViewCell alloc]initWithStyle:UITableViewCellStyleDefault reuseIdentifier:@"cell"];
+    CLPlacemark *place = self.dataArray[indexPath.row];
+    cell.textLabel.text = place.name;
+    return cell;
+}
+
+- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath{
+    tableView.hidden = YES;
+    CLPlacemark *place = self.dataArray[indexPath.row];
+    JKAnnotation *anno = [[JKAnnotation alloc] init];
+    anno.title = place.name;
+    anno.coordinate = place.location.coordinate;
+    [_map addAnnotation:anno];
+    [_map setCenterCoordinate:place.location.coordinate];
+}
 @end
